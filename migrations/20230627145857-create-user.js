@@ -33,7 +33,7 @@ module.exports = {
       phoneNumber: {
         type: Sequelize.STRING,
       },
-      pofilePicture: {
+      profilePicture: {
         type: Sequelize.STRING,
       },
       createdAt: {

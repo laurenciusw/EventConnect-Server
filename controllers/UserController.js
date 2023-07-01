@@ -1,5 +1,5 @@
 const { hashPassword, comparePassword } = require("../helpers/bcrypt");
-const { User } = require("../models/");
+const { User, UserEvent, Event } = require("../models/");
 const { signToken } = require("../helpers/jwt");
 
 class UserController {
@@ -15,8 +15,7 @@ class UserController {
         province,
         city,
         phoneNumber,
-        jobDesk,
-        isPremium,
+        profilePicture,
       } = req.body;
 
       const user = await User.create({
@@ -28,18 +27,18 @@ class UserController {
         province,
         city,
         phoneNumber,
-        jobDesk,
-        isPremium,
+        profilePicture,
       });
       res.status(201).json({
         message: `user with email ${email} succesfully created`,
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
 
-  login;
+  // login;
   static async login(req, res, next) {
     try {
       const { username, email, password, role, phoneNumber, address } =
@@ -71,6 +70,44 @@ class UserController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+
+  // regis event
+  static async regisEvent(req, res, next) {
+    try {
+      const event = await Event.findByPk(req.params.id);
+      // if ga ketemu
+      const { status, jobDesk, summary } = req.body;
+      console.log(req.user.id);
+
+      let newRegis = await UserEvent.create({
+        status,
+        jobDesk,
+        summary,
+        EventId: event.id,
+        UserId: req.user.id,
+      });
+      res.status(201).json(newRegis);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //get all my event
+  static async getMyList(req, res, next) {
+    try {
+      const events = await UserEvent.findAll({
+        where: { UserId: req.user.id },
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+        include: {
+          model: Event,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      });
+      res.status(201).json(events);
+    } catch (error) {
+      console.log(error);
     }
   }
 }
