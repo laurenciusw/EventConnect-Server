@@ -1,5 +1,5 @@
 
-const { Event, Benefit, sequelize } = require('../models')
+const { Event, Benefit, sequelize, JobDesk } = require('../models')
 
 class EventController {
   static async getEvent(req, res, next) {
@@ -15,6 +15,7 @@ class EventController {
   static async getEventByOrganizerId(req, res, next) {
     try {
       const {OrganizerId} = req.user
+      // const OrganizerId = req.headers.organizerid
       
       const fetchEvent = await Event.findAll({where: {
         OrganizerId
@@ -30,8 +31,9 @@ class EventController {
   static async postEvent(req, res, next) {
     try {
 
-      const { name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, benefit } = req.body
+      const { name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, benefit, jobdesk } = req.body
       // bentuk benefit = [{"name": "blablabla"}, {"name": "blablabla"}]
+      // bentuk jobdesk = [{"name": "blablabla"}, {"name": "blablabla"}]
 
       const {OrganizerId} = req.user
       // const OrganizerId = req.headers.organizerid
@@ -41,12 +43,20 @@ class EventController {
         const newEvent = await Event.create({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, OrganizerId }, { transaction: t });
 
         const benefitParsed = await JSON.parse(benefit)
-        const insertedOrganizer = await benefitParsed.map(el => {
+        const insertedBenefit = await benefitParsed.map(el => {
           el.EventId = newEvent.id
           return el
         })
 
-        const newBenefit = await Benefit.bulkCreate(insertedOrganizer, { transaction: t });
+        const newBenefit = await Benefit.bulkCreate(insertedBenefit, { transaction: t });
+
+        const jobdeskParsed = await JSON.parse(jobdesk)
+        const insertedJobdesk = await jobdeskParsed.map(el => {
+          el.EventId = newEvent.id
+          return el
+        })
+
+        const newJobdesk = await JobDesk.bulkCreate(insertedJobdesk, { transaction: t });
 
         return newEvent;
 

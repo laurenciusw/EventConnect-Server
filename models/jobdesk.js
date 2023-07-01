@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Benefit extends Model {
+  class JobDesk extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,22 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Benefit.belongsTo(models.Event, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+      JobDesk.belongsTo(models.Event, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     }
   }
-  Benefit.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Name Cannot Be Empty'
-        },
-        notEmpty: {
-          msg: 'Name Cannot Be Empty'
-        }
-      }
-    },
+  JobDesk.init({
     EventId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -41,11 +29,25 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Events',
         key: 'id'
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Name Cannot Be Empty'
+        },
+        notEmpty: {
+          msg: 'Name Cannot Be Empty'
+        }
       }
     }
   }, {
     sequelize,
-    modelName: 'Benefit',
+    modelName: 'JobDesk',
   });
-  return Benefit;
+  return JobDesk;
 };

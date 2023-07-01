@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Event.hasMany(models.Benefit, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
       Event.belongsTo(models.Organizer, {foreignKey: 'OrganizerId'})
+      Event.hasMany(models.JobDesk, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
       // Event.hasMany(models.Bookmark, {foreignKey: 'EventId'})
       // Event.hasMany(models.UserEvent, {foreignKey: 'EventId'})
     }
