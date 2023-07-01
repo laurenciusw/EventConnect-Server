@@ -19,10 +19,6 @@ class UserController {
         isPremium,
       } = req.body;
 
-      // if (!email) throw { name: "EmailRequired" };
-
-      // if (!password) throw { name: "PasswordRequired" };
-
       const user = await User.create({
         username,
         password,
@@ -39,8 +35,7 @@ class UserController {
         message: `user with email ${email} succesfully created`,
       });
     } catch (error) {
-      // next(error);
-      console.log(error);
+      next(error);
     }
   }
 
@@ -50,16 +45,16 @@ class UserController {
       const { username, email, password, role, phoneNumber, address } =
         req.body;
 
-      // if (!email) throw { name: "EmailRequired" };
+      if (!email) throw { name: "EmailPasswordEmpty" };
 
-      // if (!password) throw { name: "PasswordRequired" };
+      if (!password) throw { name: "EmailPasswordEmpty" };
 
       const user = await User.findOne({ where: { email } });
 
-      // if (!user) throw { name: "InvalidCredentials" };
+      if (!user) throw { name: "EmailPasswordInvalid" };
 
       const isValidPassword = comparePassword(password, user.password);
-      // if (!isValidPassword) throw { name: "InvalidCredentials" };
+      if (!isValidPassword) throw { name: "EmailPasswordInvalid" };
 
       let payload = {
         id: user.id,
@@ -75,8 +70,7 @@ class UserController {
         userRole,
       });
     } catch (error) {
-      console.log(error);
-      // next(error);
+      next(error);
     }
   }
 }
