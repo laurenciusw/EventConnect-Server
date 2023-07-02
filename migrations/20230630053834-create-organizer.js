@@ -35,7 +35,7 @@ module.exports = {
       },
       dateFound: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         validate: {
           notNull: {
             msg: 'Date Found Cannot Be Empty'

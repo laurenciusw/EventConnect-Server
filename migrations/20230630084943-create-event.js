@@ -35,7 +35,7 @@ module.exports = {
       },
       startDate: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         validate: {
           notNull: {
             msg: 'Start Date Cannot Be Empty'
@@ -71,7 +71,7 @@ module.exports = {
       },
       endDate: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         validate: {
           notNull: {
             msg: 'End Date Cannot Be Empty'
@@ -83,7 +83,7 @@ module.exports = {
       },
       registrationDate: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         validate: {
           notNull: {
             msg: 'Registration Date Cannot Be Empty'
