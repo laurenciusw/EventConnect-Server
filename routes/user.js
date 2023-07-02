@@ -1,9 +1,12 @@
-const UserController = require("../controllers/UserController")
+const UserController = require("../controllers/UserController");
+const { authentiaction } = require("../middlewares/auth");
 
-const router = require('express').Router()
+const router = require("express").Router();
 
 router
-  .post('/register', UserController.resgister)
-  .post('/login', UserController.login)
+  .post("/register", UserController.register)
+  .post("/login", UserController.login)
+  .post("/eventregister/:id", authentiaction, UserController.regisEvent)
+  .get("/mylist", authentiaction, UserController.getMyList);
 
-module.exports = router
+module.exports = router;
