@@ -151,6 +151,7 @@ class UserController {
   static async updateAccount(req, res, next) {
     try {
       let newData = {
+        username: req.body.username,
         email: req.body.email,
         password: hashPassword(req.body.password),
       };
@@ -167,9 +168,12 @@ class UserController {
   static async updateProfile(req, res, next) {
     try {
       let newData = {
+        gender: req.body.gender,
+        birthDate: req.body.birthDate,
         province: req.body.province,
         city: req.body.city,
         phoneNumber: req.body.phoneNumber,
+        profilePicture: req.body.profilePicture,
       };
       const user = await User.findOne({ where: { id: req.user.id } });
       const id = user.id;
