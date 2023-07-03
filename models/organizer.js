@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     dateFound: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false,
       validate: {
         notNull: {
