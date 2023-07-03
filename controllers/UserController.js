@@ -43,8 +43,7 @@ class UserController {
   // login;
   static async login(req, res, next) {
     try {
-      const { username, email, password, role, phoneNumber, address } =
-        req.body;
+      const { email, password } = req.body;
 
       if (!email) throw { name: "EmailPasswordEmpty" };
 
@@ -82,8 +81,8 @@ class UserController {
 
       if (!event) throw { name: "NotFound" };
       const { status, JobDeskId, summary } = req.body;
-      console.log(req.user.id);
 
+      console.log(event.id);
       let newRegis = await UserEvent.create({
         status: "Pending",
         JobDeskId,
@@ -93,6 +92,7 @@ class UserController {
       });
       res.status(201).json(newRegis);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }

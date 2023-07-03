@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserEvent,
         foreignKey: "EventId",
       });
-
       Event.hasMany(models.Benefit, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
       Event.belongsTo(models.Organizer, { foreignKey: 'OrganizerId' })
       Event.hasMany(models.JobDesk, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
