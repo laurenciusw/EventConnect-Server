@@ -11,18 +11,6 @@ function errorHandler(err, req, res, next) {
       status = 400;
       message = "Email / password is required";
       break;
-    case "IngredientsRequired":
-      status = 400;
-      message = "Minimum ingredients is 2";
-      break;
-    case "IngredientsNotEmpty":
-      status = 400;
-      message = "Ingredients is required";
-      break;
-    case "FailedCreatedItem":
-      status = 400;
-      message = "Failed to create item";
-      break;
     case "Unauthorized":
     case "JsonWebTokenError":
       status = 401;
@@ -35,14 +23,6 @@ function errorHandler(err, req, res, next) {
     case "EmailPasswordInvalid":
       status = 401;
       message = "Email / password is incorrect";
-      break;
-    case "StatusInvalid":
-      status = 401;
-      message = "Status is incorrect";
-      break;
-    case "BookmarkedArticle":
-      status = 401;
-      message = "Article is already bookmarked";
       break;
     case "Forbidden":
       status = 403;

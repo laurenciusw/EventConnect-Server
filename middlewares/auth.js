@@ -1,5 +1,5 @@
 const { verifyToken } = require("../helpers/jwt");
-const { User, Article, Category, Customer } = require("../models/");
+const { User, Article, JobDesk } = require("../models/");
 
 async function authentiaction(req, res, next) {
   let access_token = req.headers.access_token;
@@ -24,28 +24,6 @@ async function authentiaction(req, res, next) {
   }
 }
 
-async function authorization(req, res, next) {
-  try {
-    let userId = req.user.id;
-    let role = req.user.role;
-    let article = await Article.findByPk(req.params.id);
-
-    if (!article) {
-      throw { name: "NotFound" };
-    }
-    if (role == "staff") {
-      if (userId !== article.authorId) {
-        throw { name: "Forbidden" };
-      }
-    }
-    next();
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-}
-
 module.exports = {
   authentiaction,
-  authorization,
 };

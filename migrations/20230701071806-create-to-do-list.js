@@ -2,35 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("UserEvents", {
+    await queryInterface.createTable("ToDoLists", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       status: {
-        type: Sequelize.STRING,
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
       },
-      UserId: {
+      JobDeskId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: "Users",
+          model: "JobDesks",
           key: "id",
         },
-      },
-      EventId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Events",
-          key: "id",
-        },
-      },
-      jobDesk: {
-        type: Sequelize.STRING,
-      },
-      summary: {
-        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("UserEvents");
+    await queryInterface.dropTable("ToDoLists");
   },
 };
