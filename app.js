@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(require('./routes'))
 
-// app.listen(PORT, () => {
-//   console.log(`App listening on port ${PORT}`)
-// })
-module.exports = app
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`)
+})
+// module.exports = app
