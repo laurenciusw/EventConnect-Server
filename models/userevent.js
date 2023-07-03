@@ -10,14 +10,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       UserEvent.belongsTo(models.User, { foreignKey: "UserId" });
       UserEvent.belongsTo(models.Event, { foreignKey: "EventId" });
+      UserEvent.belongsTo(models.JobDesk, { foreignKey: "JobDeskId" });
     }
   }
   UserEvent.init(
     {
+      id: {
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
       status: DataTypes.STRING,
       UserId: DataTypes.INTEGER,
-      EventId: DataTypes.INTEGER,
-      jobDesk: DataTypes.STRING,
+      JobDeskId: DataTypes.INTEGER,
       summary: DataTypes.STRING,
     },
     {

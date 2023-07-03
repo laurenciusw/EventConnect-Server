@@ -7,6 +7,7 @@ router
   .post("/register", UserController.register)
   .post("/login", UserController.login)
   .post("/eventregister/:id", authentiaction, UserController.regisEvent)
-  .get("/mylist", authentiaction, UserController.getMyList);
+  .get("/mylist", authentiaction, UserController.getMyList)
+  .get("/mytodo/:id", authentiaction, UserController.getMyTodo);
 
 module.exports = router;

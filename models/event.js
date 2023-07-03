@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserEvent,
         foreignKey: "EventId",
       });
+
+      Event.hasMany(models.JobDesk, { foreignKey: "EventId" });
     }
   }
   Event.init(

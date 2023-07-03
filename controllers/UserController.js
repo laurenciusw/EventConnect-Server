@@ -1,6 +1,8 @@
 const { hashPassword, comparePassword } = require("../helpers/bcrypt");
-const { User, UserEvent, Event } = require("../models/");
+const { User, UserEvent, Event, JobDesk, ToDoList } = require("../models/");
 const { signToken } = require("../helpers/jwt");
+const jobdesk = require("../models/jobdesk");
+const { where } = require("sequelize");
 
 class UserController {
   //register user
@@ -77,37 +79,61 @@ class UserController {
   static async regisEvent(req, res, next) {
     try {
       const event = await Event.findByPk(req.params.id);
-      // if ga ketemu
-      const { status, jobDesk, summary } = req.body;
+
+      if (!event) throw { name: "NotFound" };
+      const { status, JobDeskId, summary } = req.body;
       console.log(req.user.id);
 
       let newRegis = await UserEvent.create({
-        status,
-        jobDesk,
+        status: "Pending",
+        JobDeskId,
         summary,
-        EventId: event.id,
         UserId: req.user.id,
+        EventId: event.id,
       });
       res.status(201).json(newRegis);
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
-  //get all my event
+  //get all my job desk
   static async getMyList(req, res, next) {
     try {
-      const events = await UserEvent.findAll({
-        where: { UserId: req.user.id },
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+      const lists = await UserEvent.findAll({
+        include: [
+          {
+            model: User,
+            where: { id: req.user.id },
+          },
+          {
+            model: Event,
+          },
+          {
+            model: JobDesk,
+          },
+        ],
+      });
+      res.status(200).json(lists);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  //get all my todo
+  static async getMyTodo(req, res, next) {
+    try {
+      const { id } = req.params;
+      const list = await JobDesk.findByPk(id, {
         include: {
-          model: Event,
-          attributes: { exclude: ["createdAt", "updatedAt"] },
+          model: ToDoList,
         },
       });
-      res.status(201).json(events);
+      if (!list) throw { name: "NotFound" };
+
+      res.status(200).json(list);
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 }
