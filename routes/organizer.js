@@ -11,14 +11,14 @@ routerOrganizer.get('/events/:id', EventController.getEventById)
 routerOrganizer.post('/organizers', OrganizerController.postOrganizer)
 routerOrganizer.post('/loginorganizer', OrganizerController.loginOrganizer)
 
-routerOrganizer.use(authenticationOrganizer)
+// routerOrganizer.use(authenticationOrganizer)
 
-routerOrganizer.put('/organizers/:id', OrganizerController.putOrganizer)
-routerOrganizer.delete('/organizers/:id', OrganizerController.deleteOrganizer)
-routerOrganizer.get('/eventsByOrganizer', EventController.getEventByOrganizerId)
-routerOrganizer.post('/events', EventController.postEvent)
-routerOrganizer.put('/events/:id', EventController.putEvent)
-routerOrganizer.delete('/events/:id', EventController.deleteEvent)
+routerOrganizer.put('/organizers/:id', authenticationOrganizer, OrganizerController.putOrganizer)
+routerOrganizer.delete('/organizers/:id', authenticationOrganizer, OrganizerController.deleteOrganizer)
+routerOrganizer.get('/eventsByOrganizer', authenticationOrganizer, EventController.getEventByOrganizerId)
+routerOrganizer.post('/events', authenticationOrganizer, EventController.postEvent)
+routerOrganizer.put('/events/:id', authenticationOrganizer, EventController.putEvent)
+routerOrganizer.delete('/events/:id', authenticationOrganizer, EventController.deleteEvent)
 
 routerOrganizer.use(errorHandler)
 
