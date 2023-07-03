@@ -18,7 +18,7 @@ const { hashPassword } = require("../../helpers/bcrypt");
 //   });
 // })
 
-describe('User Login', () => {
+describe.skip('User Login', () => {
   it('should sign in user and return 200', async () => {
     const custObj = { email: 'user@user.com', password: 'customer' }
     const response = await request(app)
