@@ -7,6 +7,7 @@ const routerOrganizer = express.Router()
 
 routerOrganizer.get('/organizers', OrganizerController.getOrganizer)
 routerOrganizer.get('/events', EventController.getEvent)
+routerOrganizer.get('/events/:id', EventController.getEventById)
 routerOrganizer.post('/organizers', OrganizerController.postOrganizer)
 routerOrganizer.post('/loginorganizer', OrganizerController.loginOrganizer)
 
