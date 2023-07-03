@@ -136,6 +136,67 @@ class UserController {
       next(error);
     }
   }
+
+  //get profile detail
+  static async getProfile(req, res, next) {
+    try {
+      const user = await User.findOne({ where: { id: req.user.id } });
+      res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //change account detail
+  static async updateAccount(req, res, next) {
+    try {
+      let newData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: hashPassword(req.body.password),
+      };
+      const user = await User.findOne({ where: { id: req.user.id } });
+      const id = user.id;
+      await User.update(newData, { where: { id } });
+      res.status(200).json({ message: `succes updated` });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //change account profile
+  static async updateProfile(req, res, next) {
+    try {
+      let newData = {
+        gender: req.body.gender,
+        birthDate: req.body.birthDate,
+        province: req.body.province,
+        city: req.body.city,
+        phoneNumber: req.body.phoneNumber,
+        profilePicture: req.body.profilePicture,
+      };
+      const user = await User.findOne({ where: { id: req.user.id } });
+      const id = user.id;
+      await User.update(newData, { where: { id } });
+      res.status(200).json({ message: `succes updated` });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //verif
+  static async verifyAccount(req, res, next) {
+    try {
+      const input = req.body.password;
+      const user = await User.findOne({ where: { id: req.user.id } });
+
+      const isValidPassword = comparePassword(input, user.password);
+      if (!isValidPassword) throw { name: "EmailPasswordInvalid" };
+      res.status(200).json({ message: `OK` });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = UserController;

@@ -1,7 +1,40 @@
 
+const { comparePassword } = require('../helpers/bcrypt')
+const { signToken } = require('../helpers/jwt')
 const {Organizer} = require('../models')
 
 class OrganizerController {
+  static async loginOrganizer(req, res, next) {
+    try {
+      const {email, password} = req.body
+      if (!email || !password) {
+        throw {name: 'EmailPasswordEmpty'}
+      }
+
+      const fetchOrganizer = await Organizer.findOne({
+        where: {
+          email
+        }
+      })
+      if (!fetchOrganizer) {
+        throw {name: 'EmailPasswordInvalid'}
+      }
+
+      const checkPassword = comparePassword(password, fetchOrganizer.password)
+      if (!checkPassword) {
+        throw {name: 'EmailPasswordInvalid'}
+      }
+
+      const access_token = signToken({
+        id: fetchOrganizer.id
+      })
+
+      res.status(200).json({access_token})
+    } catch (error) {
+      next(error)
+    }
+  }
+
   static async getOrganizer(req, res, next) {
     try {
       const fetchOrganizer = await Organizer.findAll()
@@ -15,6 +48,15 @@ class OrganizerController {
   static async postOrganizer(req, res, next) {
     try {
       const {organizerName, type, dateFound, personName, contactPerson, contactOrganizer, email, password} = req.body
+
+      const fetchOrganizer = await Organizer.findOne({
+        where: {
+          email
+        }
+      })
+      if (fetchOrganizer) {
+        throw {name: 'EmailPasswordInvalid'}
+      }
       
       const newOrganizer = await Organizer.create({organizerName, type, dateFound, personName, contactPerson, contactOrganizer, email, password})
 
