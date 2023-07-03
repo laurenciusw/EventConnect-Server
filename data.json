@@ -1,6 +1,6 @@
 {
   "organizer": [
-    { 
+    {
       "id": 1,
       "organizerName": "Creative Art Society",
       "type": "Non-Governmental Organization",
@@ -11,7 +11,7 @@
       "email": "creativeart@example.com",
       "password": "rahasia"
     },
-    { 
+    {
       "id": 2,
       "organizerName": "Sports for All Foundation",
       "type": "Charitable Organization",

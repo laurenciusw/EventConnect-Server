@@ -1,5 +1,7 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class JobDesk extends Model {
     /**
@@ -13,18 +15,44 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserEvent,
         foreignKey: "JobDeskId",
       });
-      JobDesk.belongsTo(models.Event, { foreignKey: "EventId" });
+      JobDesk.belongsTo(models.Event, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     }
   }
-  JobDesk.init(
-    {
-      EventId: DataTypes.INTEGER,
-      name: DataTypes.STRING,
+  JobDesk.init({
+    EventId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'EventId Cannot Be Empty'
+        },
+        notEmpty: {
+          msg: 'EventId Cannot Be Empty'
+        }
+      },
+      references: {
+        model: 'Events',
+        key: 'id'
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
     },
-    {
-      sequelize,
-      modelName: "JobDesk",
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Name Cannot Be Empty'
+        },
+        notEmpty: {
+          msg: 'Name Cannot Be Empty'
+        }
+      }
     }
+  }, {
+    sequelize,
+    modelName: "JobDesk",
+  }
   );
   return JobDesk;
 };
