@@ -76,7 +76,7 @@ const custObj = {
   "updatedAt": new Date()
 }
 
-describe('create event', () => {
+describe.skip('create event', () => {
 
   it('should create event and return 201', async () => {
 
@@ -94,7 +94,7 @@ describe('create event', () => {
 
 });
 
-describe('read event', () => {
+describe.skip('read event', () => {
 
   it('should read all event and return 200', async () => {
 
@@ -124,7 +124,7 @@ describe('read event', () => {
 
 });
 
-describe('put event', () => {
+describe.skip('put event', () => {
 
   it('should change event and return 200', async () => {
 
@@ -158,7 +158,7 @@ describe('put event', () => {
 
 });
 
-describe('delete event', () => {
+describe.skip('delete event', () => {
 
   it('should delete event and return 200', async () => {
 

@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       references: {
-        model: 'JobDesk',
+        model: 'JobDesks',
         key: 'id'
       },
       onDelete: 'CASCADE',

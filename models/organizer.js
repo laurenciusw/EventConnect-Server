@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Organizer.hasMany(models.Event, {foreignKey: 'OrganizerId'})
+      Organizer.hasMany(models.Event, {foreignKey: 'OrganizerId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     }
   }
   Organizer.init({

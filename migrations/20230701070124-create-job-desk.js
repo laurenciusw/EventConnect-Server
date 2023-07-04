@@ -16,6 +16,8 @@ module.exports = {
           model: "Events",
           key: "id",
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE' 
       },
       name: {
         allowNull: false,
