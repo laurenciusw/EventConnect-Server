@@ -36,7 +36,8 @@ class EventController {
       const fetchEvent = await Event.findAll({
         where: {
           OrganizerId
-        }
+        },
+        include: [{ model: Organizer }, { model: Benefit }, { model: JobDesk }],
       })
 
       res.status(200).json(fetchEvent)
@@ -94,22 +95,37 @@ class EventController {
   static async putEvent(req, res, next) {
     try {
       const { id } = req.params
-      const { name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, benefit } = req.body
+      const { name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, Benefits, JobDesks } = req.body
 
       const findEvent = await Event.findByPk(id)
       if (!findEvent) {
         throw { name: 'NotFound' }
       }
 
-      const updatedEvent = await Event.update({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status }, {
-        where: {
-          id
-        }
-      })
+      console.log(Benefits);
+      // let arr = []
+      // Benefits.forEach((e, i) => {
+      //   let promise = Benefit.update({ name: Benefits[i].name }, { where: { id: e.id } })
+      //   arr.push(promise)
+      // });
+      // Promise.all(arr)
+      //   .then(result => {
+      //     res.status(200).json({ message: 'Success update data' })
+      //   })
+      //   .catch(err => {
+      //     throw err
+      //   })
+      // const updatedEvent = await Event.update({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status }, {
+      //   where: {
+      //     id
+      //   }
+      // })
+      // console.log(updatedEvent);
 
-      res.status(200).json(updatedEvent)
+      // res.status(200).json(updatedEvent)
 
     } catch (error) {
+      console.log(error);
       next(error)
     }
   }

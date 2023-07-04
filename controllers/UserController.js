@@ -134,6 +134,7 @@ class UserController {
       const list = await UserTodo.findAll({
         where: {
           EventId: id,
+          UserId: req.user.id,
         },
         include: [TodoList],
       });

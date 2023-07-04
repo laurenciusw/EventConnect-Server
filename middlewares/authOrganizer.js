@@ -1,8 +1,8 @@
 const { verifyToken } = require('../helpers/jwt');
-const {Organizer} = require('../models')
+const { Organizer } = require('../models')
 
 async function authenticationOrganizer(req, res, next) {
-  let {access_token} = req.headers;
+  let { access_token } = req.headers;
 
   try {
     if (!access_token) {
