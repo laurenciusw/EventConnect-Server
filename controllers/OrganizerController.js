@@ -8,7 +8,15 @@ class OrganizerController {
     try {
       const {name, EventId, JobDeskId} = req.body
 
-      const newTodoList = await TodoList.create({name, EventId, JobDeskId})
+      const mapped = await name.map(el => {
+        return {
+          EventId,
+          name: el,
+          JobDeskId
+        }
+      })
+
+      const newTodoList = await TodoList.bulkCreate(mapped)
 
       res.status(201).json(newTodoList)
     } catch (error) {

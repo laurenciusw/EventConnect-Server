@@ -145,7 +145,7 @@ describe.skip("GET for event", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test.only("GET /api/mylist return internal server error 500", async () => {
+  test("GET /api/mylist return internal server error 500", async () => {
     jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
     const response = await request(app)
       .get(`/api/mylist`)

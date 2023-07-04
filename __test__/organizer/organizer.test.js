@@ -2,6 +2,7 @@ const app = require('../../app')
 const request = require('supertest');
 const { sequelize } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
+const { signToken } = require('../../helpers/jwt');
 
 let access_token;
 
@@ -35,30 +36,23 @@ beforeAll(async () => {
   try {
     await sequelize.queryInterface.bulkInsert('Organizers', [loginAccount])
 
-    const response = await request(app)
-      .post('/loginorganizer')
-      .send({ email: loginAccount.email, password: 'rahasia' })
+    const token = await signToken({ id: 1 })
+    access_token = token
 
-    access_token = response.body
-
-    const event = await request(app)
-      .post('/events')
-      .send({
-        "name": "Creative Art Society",
-        "location": "Non-Governmental Organization",
-        "startDate": new Date(),
-        "imageUrl": "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
-        "description": "+1234567890",
-        "endDate": new Date(),
-        "registrationDate": new Date(),
-        "category": "category",
-        "status": "status",
-        "benefit": `[{"name": "benefit1"}, {"name": "benefit2"}]`,
-        "jobdesk": `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
-        "createdAt": new Date(),
-        "updatedAt": new Date()
-      })
-      .set('access_token', access_token.access_token)
+    const insertEvent = await sequelize.queryInterface.bulkInsert('Events', [{
+      "name": "Creative Art Society",
+      "location": "Non-Governmental Organization",
+      "startDate": new Date(),
+      "imageUrl": "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
+      "description": "+1234567890",
+      "endDate": new Date(),
+      "registrationDate": new Date(),
+      "category": "category",
+      "status": "status",
+      "createdAt": new Date(),
+      "updatedAt": new Date(),
+      "OrganizerId": 1
+    }])
 
     await sequelize.queryInterface.bulkInsert('JobDesks', [{
       name: 'JobDesk',
@@ -146,14 +140,14 @@ describe('create TodoList', () => {
 
     const response = await request(app)
       .post('/todolists')
-      .send({ name: 'running', EventId: 1, JobDeskId: 1 })
+      .send({ name: ["running"], "EventId": 1, "JobDeskId": 1 })
       .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(201)
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty('name', 'running');
-    expect(response.body).toHaveProperty('EventId', 1);
-    expect(response.body).toHaveProperty('id', expect.any(Number));
+    expect(response.body[0]).toHaveProperty('name', 'running');
+    expect(response.body[0]).toHaveProperty('EventId', 1);
+    expect(response.body[0]).toHaveProperty('id', expect.any(Number));
   });
 
 });

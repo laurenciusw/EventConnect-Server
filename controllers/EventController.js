@@ -60,18 +60,20 @@ class EventController {
 
         const newEvent = await Event.create({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, OrganizerId }, { transaction: t });
 
-        const benefitParsed = await JSON.parse(benefit)
-        const insertedBenefit = await benefitParsed.map(el => {
-          el.EventId = newEvent.id
-          return el
+        const insertedBenefit = await benefit.map(({name}) => {
+          return {
+            EventId: newEvent.id,
+            name
+          }
         })
 
         const newBenefit = await Benefit.bulkCreate(insertedBenefit, { transaction: t });
 
-        const jobdeskParsed = await JSON.parse(jobdesk)
-        const insertedJobdesk = await jobdeskParsed.map(el => {
-          el.EventId = newEvent.id
-          return el
+        const insertedJobdesk = await jobdesk.map(el => {
+          return {
+            name: el.name,
+            EventId: newEvent.id
+          }
         })
 
         const newJobdesk = await JobDesk.bulkCreate(insertedJobdesk, { transaction: t });
