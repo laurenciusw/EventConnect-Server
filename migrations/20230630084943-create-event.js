@@ -131,7 +131,9 @@ module.exports = {
         references: {
           model: 'Organizers',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE' 
       },
       createdAt: {
         allowNull: false,

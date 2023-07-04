@@ -34,7 +34,39 @@ const custObj = {
 beforeAll(async () => {
   try {
     await sequelize.queryInterface.bulkInsert('Organizers', [loginAccount])
-    
+
+    const response = await request(app)
+      .post('/loginorganizer')
+      .send({ email: loginAccount.email, password: 'rahasia' })
+
+    access_token = response.body
+
+    const event = await request(app)
+      .post('/events')
+      .send({
+        "name": "Creative Art Society",
+        "location": "Non-Governmental Organization",
+        "startDate": new Date(),
+        "imageUrl": "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
+        "description": "+1234567890",
+        "endDate": new Date(),
+        "registrationDate": new Date(),
+        "category": "category",
+        "status": "status",
+        "benefit": `[{"name": "benefit1"}, {"name": "benefit2"}]`,
+        "jobdesk": `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
+        "createdAt": new Date(),
+        "updatedAt": new Date()
+      })
+      .set('access_token', access_token.access_token)
+
+    await sequelize.queryInterface.bulkInsert('JobDesks', [{
+      name: 'JobDesk',
+      EventId: 1,
+      "createdAt": new Date(),
+      "updatedAt": new Date()
+    }])
+
   } catch (error) {
     console.log(error, '>>>>>>>>>>>>>');
   }
@@ -55,20 +87,32 @@ afterAll(async () => {
     await sequelize.queryInterface.bulkDelete('Organizers', null, {
       truncate: true, restartIdentity: true, cascade: true
     });
-    
+
+    await sequelize.queryInterface.bulkDelete('Events', null, {
+      truncate: true, restartIdentity: true, cascade: true
+    });
+
+    await sequelize.queryInterface.bulkDelete('JobDesks', null, {
+      truncate: true, restartIdentity: true, cascade: true
+    });
+
+    await sequelize.queryInterface.bulkDelete('TodoLists', null, {
+      truncate: true, restartIdentity: true, cascade: true
+    });
+
   } catch (error) {
-    
+
   }
 })
 
 describe('login organizer', () => {
 
   it('should login organizer and return 200', async () => {
-    
+
     const response = await request(app)
-    .post('/loginorganizer')
-    .send({email: loginAccount.email, password: 'rahasia'})
-    
+      .post('/loginorganizer')
+      .send({ email: loginAccount.email, password: 'rahasia' })
+
     access_token = response.body
 
     expect(response.status).toBe(200)
@@ -102,13 +146,13 @@ describe('create TodoList', () => {
 
     const response = await request(app)
       .post('/todolists')
-      .send({name: 'running', Event})
-      .set('access_token', access_token)
+      .send({ name: 'running', EventId: 1, JobDeskId: 1 })
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(201)
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty('organizerName', custObj.organizerName);
-    expect(response.body).toHaveProperty('type', custObj.type);
+    expect(response.body).toHaveProperty('name', 'running');
+    expect(response.body).toHaveProperty('EventId', 1);
     expect(response.body).toHaveProperty('id', expect.any(Number));
   });
 
@@ -146,8 +190,8 @@ describe('put organizer', () => {
         "contactOrganizer": "+9876543210",
         "email": "creativeart@example.com",
         "password": "rahasia",
-        "createdAt" : new Date(),
-        "updatedAt" : new Date()
+        "createdAt": new Date(),
+        "updatedAt": new Date()
       })
       .set('access_token', access_token.access_token)
 
@@ -167,7 +211,7 @@ describe('delete organizer', () => {
   it('should delete organizer and return 200', async () => {
 
     const response = await request(app)
-      .delete('/organizers/1')
+      .delete('/organizers/2')
       .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)

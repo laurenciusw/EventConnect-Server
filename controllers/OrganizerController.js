@@ -119,6 +119,7 @@ class OrganizerController {
       
       res.status(200).json(deletedOrganizer)
     } catch (error) {
+      console.log(error, '????????????????????');
       next(error)
     }
   }

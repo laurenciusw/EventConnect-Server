@@ -112,7 +112,7 @@ describe('read event', () => {
   it('should read all event by organizer id and return 200', async () => {
 
     const response = await request(app)
-      .get('/events')
+      .get('/eventsByOrganizer')
       .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)
@@ -120,6 +120,19 @@ describe('read event', () => {
     expect(response.body[0]).toHaveProperty('name', custObj.name);
     expect(response.body[0]).toHaveProperty('imageUrl', custObj.imageUrl);
     expect(response.body[0]).toHaveProperty('id', expect.any(Number));
+  });
+
+  it('should read all event by organizer id and return 200', async () => {
+
+    const response = await request(app)
+      .get('/events/1')
+      .set('access_token', access_token.access_token)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('name', custObj.name);
+    expect(response.body).toHaveProperty('imageUrl', custObj.imageUrl);
+    expect(response.body).toHaveProperty('id', expect.any(Number));
   });
 
 });

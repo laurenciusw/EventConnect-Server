@@ -127,6 +127,7 @@ class EventController {
 
       res.status(200).json(deletedEvent)
     } catch (error) {
+      console.log(error, '??????????????');
       next(error)
     }
   }
