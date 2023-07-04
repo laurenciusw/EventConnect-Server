@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Event extends Model {
     /**
@@ -11,9 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Event.hasMany(models.Benefit, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
-      Event.belongsTo(models.Organizer, {foreignKey: 'OrganizerId'})
-      Event.hasMany(models.JobDesk, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+      Event.belongsToMany(models.User, {
+        through: models.UserEvent,
+        foreignKey: "EventId",
+      });
+      Event.hasMany(models.Benefit, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+      Event.belongsTo(models.Organizer, { foreignKey: 'OrganizerId' })
+      Event.hasMany(models.JobDesk, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
       // Event.hasMany(models.Bookmark, {foreignKey: 'EventId'})
       // Event.hasMany(models.UserEvent, {foreignKey: 'EventId'})
     }

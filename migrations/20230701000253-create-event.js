@@ -2,49 +2,52 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Events", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      username: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      password: {
+      location: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      email: {
-        allowNull: false,
-        type: Sequelize.STRING,
-        unique: true,
-      },
-      gender: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      birthDate: {
+      startDate: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      province: {
+      imageUrl: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      city: {
+      description: {
+        allowNull: false,
+        type: Sequelize.TEXT,
+      },
+      endDate: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      registrationDate: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      category: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      phoneNumber: {
+      status: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      profilePicture: {
+      OrganizerId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -57,6 +60,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Events");
   },
 };

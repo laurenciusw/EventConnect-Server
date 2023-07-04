@@ -10,8 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      JobDesk.belongsTo(models.Event, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+      JobDesk.hasMany(models.ToDoList, { foreignKey: "JobDeskId" });
+      JobDesk.belongsToMany(models.User, {
+        through: models.UserEvent,
+        foreignKey: "JobDeskId",
+      });
+      JobDesk.belongsTo(models.Event, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     }
   }
   JobDesk.init({
@@ -47,7 +51,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'JobDesk',
-  });
+    modelName: "JobDesk",
+  }
+  );
   return JobDesk;
 };
