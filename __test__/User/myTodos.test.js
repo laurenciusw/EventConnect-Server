@@ -6,6 +6,20 @@ const { signToken } = require("../../helpers/jwt");
 
 let token;
 beforeAll(async () => {
+  await sequelize.queryInterface.bulkInsert("Organizers", [
+    {
+      organizerName: "Creative Art Society",
+      type: "Non-Governmental Organization",
+      dateFound: "2020-10-15",
+      personName: "John Doe",
+      contactPerson: "+1234567890",
+      contactOrganizer: "+9876543210",
+      email: "creativeart@example.com",
+      password: "rahasia",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
   await sequelize.queryInterface.bulkInsert("Events", [
     {
       name: "Enchanted Rhythm Music Festival",
@@ -89,10 +103,15 @@ afterAll(async () => {
     cascade: true,
     truncate: true,
   });
+  await sequelize.queryInterface.bulkDelete("Organizers", null, {
+    restartIdentity: true,
+    cascade: true,
+    truncate: true,
+  });
 });
 
-describe.skip("GET for event", () => {
-  test("GET /api/mytodo", async () => {
+describe("GET for event", () => {
+  test("GET /api/mytodo/:id", async () => {
     const response = await request(app)
       .get(`/api/mytodo/1`)
       .set("access_token", token);
@@ -103,5 +122,27 @@ describe.skip("GET for event", () => {
     expect(response.body).toHaveProperty("EventId", expect.any(Number));
     expect(response.body).toHaveProperty("name", expect.any(String));
     expect(response.body).toHaveProperty("ToDoLists", expect.any(Array));
+  });
+
+  test("GET /api/mytodo retrun wrong token 404 not found", async () => {
+    const response = await request(app)
+      .get(`/api/mytodo/1`)
+      .set("access_token", "token palsu");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
+  });
+
+  test("GET /api/mytodo return wrong token 401 authorized", async () => {
+    const response = await request(app)
+      .get(`/api/mytodo/100`)
+      .set("access_token", token);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
   });
 });
