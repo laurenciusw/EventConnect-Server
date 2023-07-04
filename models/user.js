@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         through: models.UserEvent,
         foreignKey: "UserId",
       });
+      User.belongsToMany(models.TodoList, {
+        through: models.UserTodo,
+        foreignKey: "UserId",
+      });
     }
   }
   User.init(

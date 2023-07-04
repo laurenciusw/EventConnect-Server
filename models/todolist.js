@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class TodoList extends Model {
     /**
@@ -11,62 +9,77 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      TodoList.belongsTo(models.Event, {foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
-      TodoList.belongsTo(models.JobDesk, {foreignKey: 'JobDeskId', onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+      TodoList.belongsTo(models.Event, {
+        foreignKey: "EventId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      TodoList.belongsTo(models.JobDesk, {
+        foreignKey: "JobDeskId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      TodoList.belongsToMany(models.User, {
+        through: models.UserTodo,
+        foreignKey: "TodoListId",
+      });
     }
   }
-  TodoList.init({
-    EventId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'EventId Cannot Be Empty'
+  TodoList.init(
+    {
+      EventId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "EventId Cannot Be Empty",
+          },
+          notEmpty: {
+            msg: "EventId Cannot Be Empty",
+          },
         },
-        notEmpty: {
-          msg: 'EventId Cannot Be Empty'
-        }
+        references: {
+          model: "Events",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
-      references: {
-        model: 'Events',
-        key: 'id'
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "Name Cannot Be Empty",
+          },
+          notEmpty: {
+            msg: "Name Cannot Be Empty",
+          },
+        },
       },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      JobDeskId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "JobDeskId Cannot Be Empty",
+          },
+          notEmpty: {
+            msg: "JobDeskId Cannot Be Empty",
+          },
+        },
+        references: {
+          model: "JobDesk",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Name Cannot Be Empty'
-        },
-        notEmpty: {
-          msg: 'Name Cannot Be Empty'
-        }
-      }
-    },
-    JobDeskId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'JobDeskId Cannot Be Empty'
-        },
-        notEmpty: {
-          msg: 'JobDeskId Cannot Be Empty'
-        }
-      },
-      references: {
-        model: 'JobDesks',
-        key: 'id'
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+    {
+      sequelize,
+      modelName: "TodoList",
     }
-  }, {
-    sequelize,
-    modelName: 'TodoList',
-  });
+  );
   return TodoList;
 };

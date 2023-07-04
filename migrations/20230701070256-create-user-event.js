@@ -40,6 +40,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      isClaim: {
+        type: Sequelize.BOOLEAN,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
