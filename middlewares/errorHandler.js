@@ -24,10 +24,6 @@ function errorHandler(err, req, res, next) {
       status = 401;
       message = "Email / password is incorrect";
       break;
-    case "Forbidden":
-      status = 403;
-      message = "You are not authorized";
-      break;
     case "SequelizeUniqueConstraintError":
       status = 409;
       message = err.errors[0].message;
