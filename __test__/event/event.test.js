@@ -3,6 +3,7 @@ const request = require('supertest');
 const { sequelize } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 
+let access_token;
 beforeAll(async () => {
   await sequelize.queryInterface.bulkInsert('Organizers', [{
     "id": 1,
@@ -18,11 +19,29 @@ beforeAll(async () => {
     "updatedAt" : new Date()
   }])
 
+  const loginAccount = {
+    "organizerName": "Creative Art Society",
+    "type": "Non-Governmental Organization",
+    "dateFound": "2020-10-15",
+    "personName": "John Doe",
+    "contactPerson": "+1234567890",
+    "contactOrganizer": "+9876543210",
+    "email": "creativeart@example.com",
+    "password": "rahasia"
+  }
+  
+  await sequelize.queryInterface.insert('Organizers', loginAccount)
+
+  access_token = await request(app)
+  .post('/events')
+  .send(custObj)
+
   // const organizer = require('../../data.json').organizer.map(el => {
   //   el.createdAt = new Date()
   //   el.updatedAt = new Date()
   //   return el
   // })
+
   // await sequelize.queryInterface.bulkInsert('Organizers', organizer)
 
 })
@@ -35,6 +54,7 @@ afterAll(async () => {
   await sequelize.queryInterface.bulkDelete('Organizers', null, {
     truncate: true, restartIdentity: true, cascade: true
   });
+
 })
 
 const custObj = {
@@ -61,7 +81,7 @@ describe('create event', () => {
     const response = await request(app)
       .post('/events')
       .send(custObj)
-      // .set('organizerid', 1)
+      .set('access_token', 1)
 
     expect(response.status).toBe(201)
     expect(response.body).toBeInstanceOf(Object);

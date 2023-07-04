@@ -1,9 +1,21 @@
 
 const { comparePassword } = require('../helpers/bcrypt')
 const { signToken } = require('../helpers/jwt')
-const {Organizer} = require('../models')
+const {Organizer, TodoList} = require('../models')
 
 class OrganizerController {
+  static async postTodoList(req, res, next) {
+    try {
+      const {name, EventId, JobDeskId} = req.body
+
+      const newTodoList = await TodoList.create({name, EventId, JobDeskId})
+
+      res.status(201).json(newTodoList)
+    } catch (error) {
+      next(error)
+    }
+  }
+
   static async loginOrganizer(req, res, next) {
     try {
       const {email, password} = req.body
