@@ -1,14 +1,14 @@
 {
   "development": {
     "username": "postgres",
-    "password": "barcelona",
+    "password": "postgres",
     "database": "VolunteerDB",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
-    "password": "barcelona",
+    "password": "postgres",
     "database": "VolunteerDB_test",
     "host": "127.0.0.1",
     "dialect": "postgres"

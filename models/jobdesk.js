@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      JobDesk.hasMany(models.ToDoList, { foreignKey: "JobDeskId" });
+      JobDesk.hasMany(models.TodoList, { foreignKey: "JobDeskId" });
       JobDesk.belongsToMany(models.User, {
         through: models.UserEvent,
         foreignKey: "JobDeskId",

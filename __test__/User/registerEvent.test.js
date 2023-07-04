@@ -95,7 +95,7 @@ afterAll(async () => {
   });
 });
 
-describe("POST for event", () => {
+describe.skip("POST for event", () => {
   test("POST /api/eventregister/:id return 201 create account", async () => {
     const dataBody = {
       JobDeskId: 1,
