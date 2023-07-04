@@ -52,7 +52,7 @@ class EventController {
       const { name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, benefit, jobdesk } = req.body
       // bentuk benefit = [{"name": "blablabla"}, {"name": "blablabla"}]
       // bentuk jobdesk = [{"name": "blablabla"}, {"name": "blablabla"}]
-
+      console.log({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, benefit, jobdesk });
       const { OrganizerId } = req.user
       // const OrganizerId = req.headers.organizerid
 
@@ -60,23 +60,24 @@ class EventController {
 
         const newEvent = await Event.create({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status, OrganizerId }, { transaction: t });
 
-        const insertedBenefit = await benefit.map(({name}) => {
+        const insertedBenefit = await benefit.map(el => {
           return {
             EventId: newEvent.id,
-            name
+            name: el
           }
         })
 
-        const newBenefit = await Benefit.bulkCreate(insertedBenefit, { transaction: t });
+
+        await Benefit.bulkCreate(insertedBenefit, { transaction: t });
 
         const insertedJobdesk = await jobdesk.map(el => {
           return {
-            name: el.name,
-            EventId: newEvent.id
+            EventId: newEvent.id,
+            name: el
           }
         })
 
-        const newJobdesk = await JobDesk.bulkCreate(insertedJobdesk, { transaction: t });
+        await JobDesk.bulkCreate(insertedJobdesk, { transaction: t });
 
         return newEvent;
 
@@ -85,6 +86,7 @@ class EventController {
       res.status(201).json(result)
 
     } catch (error) {
+      console.log(error);
       next(error)
     }
   }
