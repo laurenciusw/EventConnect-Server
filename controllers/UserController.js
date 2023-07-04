@@ -1,5 +1,12 @@
 const { hashPassword, comparePassword } = require("../helpers/bcrypt");
-const { User, UserEvent, Event, JobDesk, ToDoList } = require("../models/");
+const {
+  User,
+  UserEvent,
+  Event,
+  JobDesk,
+  TodoList,
+  UserTodo,
+} = require("../models/");
 const { signToken } = require("../helpers/jwt");
 const jobdesk = require("../models/jobdesk");
 const { where } = require("sequelize");
@@ -124,11 +131,13 @@ class UserController {
   static async getMyTodo(req, res, next) {
     try {
       const { id } = req.params;
-      const list = await JobDesk.findByPk(id, {
-        include: {
-          model: ToDoList,
+      const list = await UserTodo.findAll({
+        where: {
+          EventId: id,
         },
+        include: [TodoList],
       });
+
       if (!list) throw { name: "NotFound" };
 
       res.status(200).json(list);
@@ -193,6 +202,69 @@ class UserController {
       const isValidPassword = comparePassword(input, user.password);
       if (!isValidPassword) throw { name: "EmailPasswordInvalid" };
       res.status(200).json({ message: `OK` });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //create todo
+  static async claimTodo(req, res, next) {
+    try {
+      const lists = await TodoList.findAll({
+        where: {
+          JobDeskId: req.body.JobDeskId,
+        },
+      });
+
+      const userTodos = lists.map((list) => ({
+        TodoListId: list.id,
+        status: false,
+        UserId: req.user.id,
+        EventId: req.body.EventId,
+      }));
+
+      await UserTodo.bulkCreate(userTodos);
+
+      res.status(200).json(lists);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //update status todo
+  static async updateStatusTodo(req, res, next) {
+    try {
+      let id = req.params.id;
+      let newStatus = {
+        status: req.body.status,
+      };
+
+      let todo = await UserTodo.findByPk(id);
+      if (!todo) throw { name: "NotFound" };
+
+      await UserTodo.update(newStatus, { where: { id } });
+      res.status(200).json({
+        message: `Ok`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  //update status claim
+  static async updateIsClaim(req, res, next) {
+    try {
+      let id = req.params.id;
+      let newStatus = {
+        isClaim: req.body.isClaim,
+      };
+
+      let user = await UserEvent.findByPk(id);
+      if (!user) throw { name: "NotFound" };
+
+      await UserEvent.update(newStatus, { where: { id } });
+      res.status(200).json({
+        message: `Ok`,
+      });
     } catch (error) {
       console.log(error);
     }
