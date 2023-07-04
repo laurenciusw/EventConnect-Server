@@ -71,7 +71,7 @@ class OrganizerController {
       }
       
       const newOrganizer = await Organizer.create({organizerName, type, dateFound, personName, contactPerson, contactOrganizer, email, password})
-
+      
       res.status(201).json(newOrganizer)
 
     } catch (error) {

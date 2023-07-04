@@ -4,9 +4,20 @@ const { sequelize } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 
 let access_token;
+
+const loginAccount = {
+  "organizerName": "Creative Art Society",
+  "type": "Non-Governmental Organization",
+  "dateFound": "2020-10-15",
+  "personName": "John Doe",
+  "contactPerson": "+1234567890",
+  "contactOrganizer": "+9876543210",
+  "email": "creativeart@example.com",
+  "password": "rahasia"
+}
+
 beforeAll(async () => {
   await sequelize.queryInterface.bulkInsert('Organizers', [{
-    "id": 1,
     "organizerName": "Creative Art Society",
     "type": "Non-Governmental Organization",
     "dateFound": "2020-10-15",
@@ -14,27 +25,19 @@ beforeAll(async () => {
     "contactPerson": "+1234567890",
     "contactOrganizer": "+9876543210",
     "email": "creativeart@example.com",
-    "password": "rahasia",
+    "password": hashPassword('rahasia'),
     "createdAt" : new Date(),
     "updatedAt" : new Date()
   }])
 
-  const loginAccount = {
-    "organizerName": "Creative Art Society",
-    "type": "Non-Governmental Organization",
-    "dateFound": "2020-10-15",
-    "personName": "John Doe",
-    "contactPerson": "+1234567890",
-    "contactOrganizer": "+9876543210",
-    "email": "creativeart@example.com",
-    "password": "rahasia"
-  }
   
-  await sequelize.queryInterface.insert('Organizers', loginAccount)
+  // await sequelize.queryInterface.insert('Organizers', loginAccount)
 
-  access_token = await request(app)
-  .post('/events')
-  .send(custObj)
+  const response = await request(app)
+  .post('/loginorganizer')
+  .send({email: loginAccount.email, password: loginAccount.password})
+
+  access_token = response.body
 
   // const organizer = require('../../data.json').organizer.map(el => {
   //   el.createdAt = new Date()
@@ -58,7 +61,6 @@ afterAll(async () => {
 })
 
 const custObj = {
-  "id": 1,
   "name": "Creative Art Society",
   "location": "Non-Governmental Organization",
   "startDate": new Date(),
@@ -81,11 +83,10 @@ describe('create event', () => {
     const response = await request(app)
       .post('/events')
       .send(custObj)
-      .set('access_token', 1)
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(201)
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty('id', custObj.id);
     expect(response.body).toHaveProperty('name', custObj.name);
     expect(response.body).toHaveProperty('imageUrl', custObj.imageUrl);
     expect(response.body).toHaveProperty('id', expect.any(Number));
@@ -99,10 +100,10 @@ describe('read event', () => {
 
     const response = await request(app)
       .get('/events')
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)
     expect(response.body[0]).toBeInstanceOf(Object);
-    expect(response.body[0]).toHaveProperty('id', custObj.id);
     expect(response.body[0]).toHaveProperty('name', custObj.name);
     expect(response.body[0]).toHaveProperty('imageUrl', custObj.imageUrl);
     expect(response.body[0]).toHaveProperty('id', expect.any(Number));
@@ -112,11 +113,10 @@ describe('read event', () => {
 
     const response = await request(app)
       .get('/events')
-      // .set('organizerid', 1)
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)
     expect(response.body[0]).toBeInstanceOf(Object);
-    expect(response.body[0]).toHaveProperty('id', custObj.id);
     expect(response.body[0]).toHaveProperty('name', custObj.name);
     expect(response.body[0]).toHaveProperty('imageUrl', custObj.imageUrl);
     expect(response.body[0]).toHaveProperty('id', expect.any(Number));
@@ -131,7 +131,6 @@ describe('put event', () => {
     const response = await request(app)
       .put('/events/1')
       .send({
-        "id": 1,
         "name": "Creative Art Society1",
         "location": "Non-Governmental Organization1",
         "startDate": new Date(),
@@ -146,6 +145,7 @@ describe('put event', () => {
         "createdAt" : new Date(),
         "updatedAt" : new Date()
       })
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toBeInstanceOf(Object);
@@ -164,6 +164,7 @@ describe('delete event', () => {
 
     const response = await request(app)
       .delete('/events/1')
+      .set('access_token', access_token.access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toBe(1)

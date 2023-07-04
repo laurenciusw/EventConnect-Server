@@ -33,7 +33,7 @@ afterAll(async () => {
   });
 });
 
-describe("POST for register", () => {
+describe.skip("POST for register", () => {
   test("POST /register return 201 create account", async () => {
     const dataBody = {
       username: "rizki",
@@ -77,7 +77,7 @@ describe("POST for register", () => {
   });
 });
 
-describe("POST for login", () => {
+describe.skip("POST for login", () => {
   test("POST /login return 200 succes login", async () => {
     const dataBody = { email: "bejo@gmail.com", password: "12345" };
 

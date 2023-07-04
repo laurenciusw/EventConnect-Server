@@ -13,6 +13,7 @@ routerOrganizer.post('/loginorganizer', OrganizerController.loginOrganizer)
 
 // routerOrganizer.use(authenticationOrganizer)
 
+routerOrganizer.post('/todolists', authenticationOrganizer, OrganizerController.postTodoList)
 routerOrganizer.put('/organizers/:id', authenticationOrganizer, OrganizerController.putOrganizer)
 routerOrganizer.delete('/organizers/:id', authenticationOrganizer, OrganizerController.deleteOrganizer)
 routerOrganizer.get('/eventsByOrganizer', authenticationOrganizer, EventController.getEventByOrganizerId)

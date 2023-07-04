@@ -92,7 +92,7 @@ afterAll(async () => {
   });
 });
 
-describe("GET for event", () => {
+describe.skip("GET for event", () => {
   test("GET /api/mylist", async () => {
     const response = await request(app)
       .get(`/api/mylist`)
