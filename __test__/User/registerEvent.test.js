@@ -6,6 +6,20 @@ const { signToken } = require("../../helpers/jwt");
 
 let token;
 beforeAll(async () => {
+  await sequelize.queryInterface.bulkInsert("Organizers", [
+    {
+      organizerName: "Creative Art Society",
+      type: "Non-Governmental Organization",
+      dateFound: "2020-10-15",
+      personName: "John Doe",
+      contactPerson: "+1234567890",
+      contactOrganizer: "+9876543210",
+      email: "creativeart@example.com",
+      password: "rahasia",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
   await sequelize.queryInterface.bulkInsert("Events", [
     {
       name: "Enchanted Rhythm Music Festival",
@@ -74,6 +88,11 @@ afterAll(async () => {
     cascade: true,
     truncate: true,
   });
+  await sequelize.queryInterface.bulkDelete("Organizers", null, {
+    restartIdentity: true,
+    cascade: true,
+    truncate: true,
+  });
 });
 
 describe("POST for event", () => {
@@ -100,6 +119,29 @@ describe("POST for event", () => {
     expect(response.body).toHaveProperty("UserId", expect.any(Number));
     expect(response.body).toHaveProperty("EventId", expect.any(Number));
   });
+  test("POST /api/eventregister/:id retrun wrong token 404 not found", async () => {
+    const dataBody = {
+      email: "rizki@gmail.com",
+      password: "customer",
+      gender: "male",
+      birthDate: "2023-07-03 06:37:01.733 +00:00",
+      province: "riau",
+      city: "pekanbaru",
+      phoneNumber: "0834523454",
+      profilePicture:
+        "https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg",
+    };
+
+    const response = await request(app)
+      .post("/api/eventregister/1")
+      .send(dataBody)
+      .set("access_token", "token palsu");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
+  });
 
   test("POST /api/eventregister/100 return 404 not found", async () => {
     const dataBody = {
@@ -122,5 +164,6 @@ describe("POST for event", () => {
     expect(response.status).toBe(404);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
   });
 });

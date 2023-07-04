@@ -1,11 +1,25 @@
 const request = require("supertest");
 const app = require("../../app");
-const { sequelize, User } = require("../../models");
+const { sequelize, User, UserEvent } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 const { signToken } = require("../../helpers/jwt");
 
 let token;
 beforeAll(async () => {
+  await sequelize.queryInterface.bulkInsert("Organizers", [
+    {
+      organizerName: "Creative Art Society",
+      type: "Non-Governmental Organization",
+      dateFound: "2020-10-15",
+      personName: "John Doe",
+      contactPerson: "+1234567890",
+      contactOrganizer: "+9876543210",
+      email: "creativeart@example.com",
+      password: "rahasia",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
   await sequelize.queryInterface.bulkInsert("Events", [
     {
       name: "Enchanted Rhythm Music Festival",
@@ -69,6 +83,10 @@ beforeAll(async () => {
   ]);
 });
 
+beforeEach(() => {
+  jest.restoreAllMocks();
+});
+
 afterAll(async () => {
   await sequelize.queryInterface.bulkDelete("UserEvents", null, {
     restartIdentity: true,
@@ -86,6 +104,11 @@ afterAll(async () => {
     truncate: true,
   });
   await sequelize.queryInterface.bulkDelete("Events", null, {
+    restartIdentity: true,
+    cascade: true,
+    truncate: true,
+  });
+  await sequelize.queryInterface.bulkDelete("Organizers", null, {
     restartIdentity: true,
     cascade: true,
     truncate: true,
@@ -111,26 +134,24 @@ describe("GET for event", () => {
     expect(response.body[0]).toHaveProperty("JobDesk", expect.any(Object));
   });
 
-  test("POST /api/eventregister/100 return 404 not found", async () => {
-    const dataBody = {
-      email: "rizki@gmail.com",
-      password: "customer",
-      gender: "male",
-      birthDate: "2023-07-03 06:37:01.733 +00:00",
-      province: "riau",
-      city: "pekanbaru",
-      phoneNumber: "0834523454",
-      profilePicture:
-        "https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg",
-    };
-
+  test("GET /api/mylist retrun wrong token 401", async () => {
     const response = await request(app)
-      .post("/api/eventregister/100")
-      .send(dataBody)
+      .get(`/api/mylist`)
+      .set("access_token", "token palsu");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
+  });
+
+  test.only("GET /api/mylist return internal server error 500", async () => {
+    jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
+    const response = await request(app)
+      .get(`/api/mylist`)
       .set("access_token", token);
 
-    expect(response.status).toBe(404);
-    expect(response.body).toBeInstanceOf(Object);
+    expect(response.status).toBe(500);
     expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });
