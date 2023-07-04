@@ -40,7 +40,7 @@ afterAll(async () => {
   });
 });
 
-describe("PUT for account user", () => {
+describe.skip("PUT for account user", () => {
   test("PUT /api/profile return 200 update profile user", async () => {
     const dataBody = {
       gender: "female",

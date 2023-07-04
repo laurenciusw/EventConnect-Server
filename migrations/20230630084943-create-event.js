@@ -59,7 +59,7 @@ module.exports = {
       },
       description: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         validate: {
           notNull: {
             msg: 'Description Cannot Be Empty'
@@ -131,7 +131,9 @@ module.exports = {
         references: {
           model: 'Organizers',
           key: 'id'
-        }
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE' 
       },
       createdAt: {
         allowNull: false,

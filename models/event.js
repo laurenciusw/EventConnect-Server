@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "EventId",
       });
       Event.hasMany(models.Benefit, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-      Event.belongsTo(models.Organizer, { foreignKey: 'OrganizerId' })
+      Event.belongsTo(models.Organizer, { foreignKey: 'OrganizerId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
       Event.hasMany(models.JobDesk, { foreignKey: 'EventId', onDelete: 'CASCADE', onUpdate: 'CASCADE' })
       // Event.hasMany(models.Bookmark, {foreignKey: 'EventId'})
       // Event.hasMany(models.UserEvent, {foreignKey: 'EventId'})
@@ -70,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
       validate: {
         notNull: {
@@ -143,7 +143,9 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Organizers',
         key: 'id'
-      }
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE' 
     }
   }, {
     sequelize,

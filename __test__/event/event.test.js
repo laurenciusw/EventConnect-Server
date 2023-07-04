@@ -2,6 +2,7 @@ const app = require('../../app')
 const request = require('supertest');
 const { sequelize } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
+const { signToken } = require('../../helpers/jwt');
 
 let access_token;
 
@@ -33,11 +34,14 @@ beforeAll(async () => {
   
   // await sequelize.queryInterface.insert('Organizers', loginAccount)
 
-  const response = await request(app)
-  .post('/loginorganizer')
-  .send({email: loginAccount.email, password: loginAccount.password})
+  const token = await signToken({ id: 1 })
+  access_token = token
 
-  access_token = response.body
+  // const response = await request(app)
+  // .post('/loginorganizer')
+  // .send({email: loginAccount.email, password: loginAccount.password})
+
+  // access_token = response.body
 
   // const organizer = require('../../data.json').organizer.map(el => {
   //   el.createdAt = new Date()
@@ -70,8 +74,8 @@ const custObj = {
   "registrationDate": new Date(),
   "category": "category",
   "status": "status",
-  "benefit": `[{"name": "benefit1"}, {"name": "benefit2"}]`,
-  "jobdesk": `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
+  "benefit": [{"name": "benefit1"}, {"name": "benefit2"}],
+  "jobdesk": [{"name": "jobdesk1"}, {"name": "jobdesk2"}],
   "createdAt" : new Date(),
   "updatedAt" : new Date()
 }
@@ -83,7 +87,7 @@ describe('create event', () => {
     const response = await request(app)
       .post('/events')
       .send(custObj)
-      .set('access_token', access_token.access_token)
+      .set('access_token', access_token)
 
     expect(response.status).toBe(201)
     expect(response.body).toBeInstanceOf(Object);
@@ -100,7 +104,7 @@ describe('read event', () => {
 
     const response = await request(app)
       .get('/events')
-      .set('access_token', access_token.access_token)
+      .set('access_token', access_token)
 
     expect(response.status).toBe(200)
     expect(response.body[0]).toBeInstanceOf(Object);
@@ -112,14 +116,27 @@ describe('read event', () => {
   it('should read all event by organizer id and return 200', async () => {
 
     const response = await request(app)
-      .get('/events')
-      .set('access_token', access_token.access_token)
+      .get('/eventsByOrganizer')
+      .set('access_token', access_token)
 
     expect(response.status).toBe(200)
     expect(response.body[0]).toBeInstanceOf(Object);
     expect(response.body[0]).toHaveProperty('name', custObj.name);
     expect(response.body[0]).toHaveProperty('imageUrl', custObj.imageUrl);
     expect(response.body[0]).toHaveProperty('id', expect.any(Number));
+  });
+
+  it('should read all event by organizer id and return 200', async () => {
+
+    const response = await request(app)
+      .get('/events/1')
+      .set('access_token', access_token)
+
+    expect(response.status).toBe(200)
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('name', custObj.name);
+    expect(response.body).toHaveProperty('imageUrl', custObj.imageUrl);
+    expect(response.body).toHaveProperty('id', expect.any(Number));
   });
 
 });
@@ -145,7 +162,7 @@ describe('put event', () => {
         "createdAt" : new Date(),
         "updatedAt" : new Date()
       })
-      .set('access_token', access_token.access_token)
+      .set('access_token', access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toBeInstanceOf(Object);
@@ -164,7 +181,7 @@ describe('delete event', () => {
 
     const response = await request(app)
       .delete('/events/1')
-      .set('access_token', access_token.access_token)
+      .set('access_token', access_token)
 
     expect(response.status).toBe(200)
     expect(response.body).toBe(1)

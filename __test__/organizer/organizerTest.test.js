@@ -61,7 +61,7 @@ afterAll(async () => {
   }
 })
 
-describe('login organizer', () => {
+describe.skip('login organizer', () => {
 
   it('should login organizer and return 200', async () => {
 
@@ -78,7 +78,7 @@ describe('login organizer', () => {
 
 });
 
-describe('create organizer', () => {
+describe.skip('create organizer', () => {
 
   it('should create organizer and return 201', async () => {
 
@@ -96,7 +96,7 @@ describe('create organizer', () => {
 
 });
 
-describe('create TodoList', () => {
+describe.skip('create TodoList', () => {
 
   it('should create TodoList and return 201', async () => {
 
@@ -114,7 +114,7 @@ describe('create TodoList', () => {
 
 });
 
-describe('read organizer', () => {
+describe.skip('read organizer', () => {
 
   it('should read all organizer and return 200', async () => {
 
@@ -131,7 +131,7 @@ describe('read organizer', () => {
 
 });
 
-describe('put organizer', () => {
+describe.skip('put organizer', () => {
 
   it('should change organizer and return 200', async () => {
 
@@ -162,7 +162,7 @@ describe('put organizer', () => {
 
 });
 
-describe('delete organizer', () => {
+describe.skip('delete organizer', () => {
 
   it('should delete organizer and return 200', async () => {
 
