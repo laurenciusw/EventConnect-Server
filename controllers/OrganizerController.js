@@ -209,7 +209,6 @@ class OrganizerController {
   static async getUserDetail(req, res, next) {
     try {
       const { id } = req.params;
-      console.log(req.params);
 
       const users = await UserEvent.findByPk(id, {
         include: [User, JobDesk],

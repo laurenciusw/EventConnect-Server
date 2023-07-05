@@ -124,7 +124,8 @@ describe.skip("read event", () => {
     expect(response.body[0]).toHaveProperty("id", expect.any(Number));
   });
 
-  it("should read all event by organizer id and return 200", async () => {
+  it('should read all event by event id and return 200', async () => {
+
     const response = await request(app)
       .get("/events/1")
       .set("access_token", access_token);
@@ -135,27 +136,39 @@ describe.skip("read event", () => {
     expect(response.body).toHaveProperty("imageUrl", custObj.imageUrl);
     expect(response.body).toHaveProperty("id", expect.any(Number));
   });
+
+  it('should read all event by event id and return 404', async () => {
+
+    const response = await request(app)
+      .get('/events/99')
+      .set('access_token', access_token)
+
+    expect(response.status).toBe(404)
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('name', 'NotFound');
+    expect(response.body).toHaveProperty('message', 'Data is not found');
+  });
+
 });
 
-describe.skip("put event", () => {
+describe("put event", () => {
   it("should change event and return 200", async () => {
     const response = await request(app)
       .put("/events/1")
       .send({
-        name: "Creative Art Society1",
-        location: "Non-Governmental Organization1",
-        startDate: new Date(),
-        imageUrl:
-          "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
-        description: "+1234567890",
-        endDate: new Date(),
-        registrationDate: new Date(),
-        category: "category",
-        status: "status",
-        benefit: `[{"name": "benefit1"}, {"name": "benefit2"}]`,
-        jobdesk: `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        "name": "Creative Art Society1",
+        "location": "Non-Governmental Organization1",
+        "startDate": new Date(),
+        "imageUrl": "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
+        "description": "+1234567890",
+        "endDate": new Date(),
+        "registrationDate": new Date(),
+        "category": "category",
+        "status": "status",
+        "benefit": `[{"name": "benefit1"}, {"name": "benefit2"}]`,
+        "jobdesk": `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
+        "createdAt": new Date(),
+        "updatedAt": new Date()
       })
       .set("access_token", access_token);
 
@@ -167,9 +180,41 @@ describe.skip("put event", () => {
     // expect(response.body).toHaveProperty('imageUrl', "Non-Governmental Organization1");
     // expect(response.body).toHaveProperty('id', expect.any(Number));
   });
+
+  it('should return error and return 404', async () => {
+
+    const response = await request(app)
+      .put('/events/99')
+      .send({
+        "name": "Creative Art Society1",
+        "location": "Non-Governmental Organization1",
+        "startDate": new Date(),
+        "imageUrl": "https://static1.squarespace.com/static/61001e71b0a4ce3c2635f669/t/6137632f4e68712eca046a40/1632268825350/CAS+Logo+from+Debbie+R.jpg?format=1500w",
+        "description": "+1234567890",
+        "endDate": new Date(),
+        "registrationDate": new Date(),
+        "category": "category",
+        "status": "status",
+        "benefit": `[{"name": "benefit1"}, {"name": "benefit2"}]`,
+        "jobdesk": `[{"name": "jobdesk1"}, {"name": "jobdesk2"}]`,
+        "createdAt": new Date(),
+        "updatedAt": new Date()
+      })
+      .set('access_token', access_token)
+
+    expect(response.status).toBe(404)
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty('name', "NotFound");
+    expect(response.body).toHaveProperty('message', "Data is not found");
+    // expect(response.body).toHaveProperty('id', custObj.id);
+    // expect(response.body).toHaveProperty('name', "Creative Art Society1");
+    // expect(response.body).toHaveProperty('imageUrl', "Non-Governmental Organization1");
+    // expect(response.body).toHaveProperty('id', expect.any(Number));
+  });
+
 });
 
-describe.skip("delete event", () => {
+describe("delete event", () => {
   it("should delete event and return 200", async () => {
     const response = await request(app)
       .delete("/events/1")
@@ -183,4 +228,21 @@ describe.skip("delete event", () => {
     // expect(response.body).toHaveProperty('imageUrl', "Non-Governmental Organization1");
     // expect(response.body).toHaveProperty('id', expect.any(Number));
   });
+
+  it('should return error and return 404', async () => {
+
+    const response = await request(app)
+      .delete('/events/99')
+      .set('access_token', access_token)
+
+    expect(response.status).toBe(404)
+    expect(response.body).toHaveProperty('name', "NotFound");
+    expect(response.body).toHaveProperty('message', "Data is not found");
+    // expect(response.body).toBeInstanceOf(Number);
+    // expect(response.body).toHaveProperty('id', custObj.id);
+    // expect(response.body).toHaveProperty('name', "Creative Art Society1");
+    // expect(response.body).toHaveProperty('imageUrl', "Non-Governmental Organization1");
+    // expect(response.body).toHaveProperty('id', expect.any(Number));
+  });
+
 });
