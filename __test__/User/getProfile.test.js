@@ -40,7 +40,7 @@ afterAll(async () => {
   });
 });
 
-describe.skip("GET for event", () => {
+describe("GET for event", () => {
   test("GET /api/users return 200 get profile user", async () => {
     const response = await request(app)
       .get(`/api/users`)

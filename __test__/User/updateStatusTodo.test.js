@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../../app");
-const { sequelize, User, UserEvent } = require("../../models");
+const { sequelize, User } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 const { signToken } = require("../../helpers/jwt");
 
@@ -38,14 +38,7 @@ beforeAll(async () => {
       updatedAt: new Date(),
     },
   ]);
-  await sequelize.queryInterface.bulkInsert("JobDesks", [
-    {
-      name: "ngepel",
-      EventId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
+
   let passowordHash = hashPassword("12345");
   await sequelize.queryInterface.bulkInsert("Users", [
     {
@@ -70,11 +63,30 @@ beforeAll(async () => {
   };
 
   token = signToken(payload);
-  await sequelize.queryInterface.bulkInsert("UserEvents", [
+
+  await sequelize.queryInterface.bulkInsert("JobDesks", [
     {
-      status: "Pending",
+      name: "ngepel",
+      EventId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+
+  await sequelize.queryInterface.bulkInsert("TodoLists", [
+    {
+      EventId: 1,
+      name: "mengatur panggung",
       JobDeskId: 1,
-      summary: "menambah minat baca",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+
+  await sequelize.queryInterface.bulkInsert("UserTodos", [
+    {
+      TodoListId: 1,
+      status: false,
       UserId: 1,
       EventId: 1,
       createdAt: new Date(),
@@ -83,16 +95,19 @@ beforeAll(async () => {
   ]);
 });
 
-beforeEach(() => {
-  jest.restoreAllMocks();
-});
-
 afterAll(async () => {
-  await sequelize.queryInterface.bulkDelete("UserEvents", null, {
+  await sequelize.queryInterface.bulkDelete("UserTodos", null, {
     restartIdentity: true,
     cascade: true,
     truncate: true,
   });
+
+  await sequelize.queryInterface.bulkDelete("TodoLists", null, {
+    restartIdentity: true,
+    cascade: true,
+    truncate: true,
+  });
+
   await sequelize.queryInterface.bulkDelete("JobDesks", null, {
     restartIdentity: true,
     cascade: true,
@@ -115,28 +130,28 @@ afterAll(async () => {
   });
 });
 
-describe("GET for event", () => {
-  test("GET /api/mylist", async () => {
+describe("Patch for claim todo", () => {
+  test("Patch /api/todo/:id return 200 change status todo", async () => {
+    const dataBody = {
+      status: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/todo/1`)
+      .send(dataBody)
       .set("access_token", token);
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("status", expect.any(String));
-    expect(response.body[0]).toHaveProperty("JobDeskId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("summary", expect.any(String));
-    expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("User", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("Event", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("JobDesk", expect.any(Object));
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
   });
 
-  test("GET /api/mylist retrun wrong token 401", async () => {
+  test("PUT /api/todo return 401 authorized", async () => {
+    const dataBody = {
+      status: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/todo/1`)
+      .send(dataBody)
       .set("access_token", "token palsu");
 
     expect(response.status).toBe(401);
@@ -145,13 +160,18 @@ describe("GET for event", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test("GET /api/mylist return internal server error 500", async () => {
-    jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
+  test.only("PATCH /api/todo return 404 not found", async () => {
+    const dataBody = {
+      status: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/todo/100`)
+      .send(dataBody)
       .set("access_token", token);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
   });
 });

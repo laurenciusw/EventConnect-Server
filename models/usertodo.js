@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserTodo.init(
     {
+      id: {
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+      },
       TodoListId: DataTypes.INTEGER,
       status: DataTypes.BOOLEAN,
       UserId: DataTypes.INTEGER,
