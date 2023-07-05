@@ -4,13 +4,12 @@ const { sequelize } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 
 beforeAll(async () => {
-  let token;
-  let tokenPalsu;
   let passowordHash = hashPassword("12345");
   await sequelize.queryInterface.bulkInsert("Users", [
     {
       username: "bejo",
       email: "bejo@gmail.com",
+      password: passowordHash,
       gender: "male",
       birthDate: "2023-07-03 06:37:01.733 +00:00",
       province: "riau",
@@ -18,7 +17,6 @@ beforeAll(async () => {
       phoneNumber: "0834523454",
       profilePicture:
         "https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg",
-      password: passowordHash,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -33,7 +31,7 @@ afterAll(async () => {
   });
 });
 
-describe.skip("POST for register", () => {
+describe("POST for register", () => {
   test("POST /register return 201 create account", async () => {
     const dataBody = {
       username: "rizki",
@@ -308,7 +306,7 @@ describe.skip("POST for register", () => {
   });
 });
 
-describe.skip("POST for login", () => {
+describe("POST for login", () => {
   test("POST /login return 200 succes login", async () => {
     const dataBody = { email: "bejo@gmail.com", password: "12345" };
 

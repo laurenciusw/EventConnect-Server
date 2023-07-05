@@ -40,7 +40,7 @@ afterAll(async () => {
   });
 });
 
-describe.skip("Post for verify account user", () => {
+describe("Post for verify account user", () => {
   test("Post /api/verify return 200 verify account user", async () => {
     const dataBody = {
       password: "12345",
