@@ -74,6 +74,13 @@ beforeAll(async () => {
       },
     ]);
 
+    await sequelize.queryInterface.bulkInsert('JobDesks', [{
+      name: 'JobDesk',
+      EventId: 1,
+      "createdAt": new Date(),
+      "updatedAt": new Date()
+    }])
+
     await sequelize.queryInterface.bulkInsert('UserEvents', [{
       status: 'JobDesk',
       UserId: 1,
