@@ -160,7 +160,7 @@ describe("Patch for claim todo", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test.only("PATCH /api/todo return 404 not found", async () => {
+  test("PATCH /api/todo return 404 not found", async () => {
     const dataBody = {
       status: true,
     };
