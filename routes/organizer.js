@@ -51,6 +51,12 @@ routerOrganizer.delete(
   EventController.deleteEvent
 );
 
+routerOrganizer.get(
+  "/userevent/user/:id",
+  OrganizerController.getUserDetail
+);
+
+
 routerOrganizer.use(errorHandler);
 
 module.exports = routerOrganizer;

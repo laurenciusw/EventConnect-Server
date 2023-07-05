@@ -74,7 +74,9 @@ class UserController {
       res.status(200).json({
         access_token,
         email,
-        userRole,
+        id: user.id,
+        name: user.username,
+        photoUrl: user.profilePicture
       });
     } catch (error) {
       next(error);

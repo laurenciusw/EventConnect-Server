@@ -1,6 +1,6 @@
 const { comparePassword } = require("../helpers/bcrypt");
 const { signToken } = require("../helpers/jwt");
-const { Organizer, TodoList, UserEvent, User } = require("../models");
+const { Organizer, TodoList, UserEvent, User, JobDesk } = require("../models");
 
 class OrganizerController {
   static async postTodoList(req, res, next) {
@@ -48,7 +48,12 @@ class OrganizerController {
         id: fetchOrganizer.id,
       });
 
-      res.status(200).json({ access_token });
+      res.status(200).json({
+        access_token,
+        email,
+        id: fetchOrganizer.id + 1000,
+        name: fetchOrganizer.organizerName
+      });
     } catch (error) {
       next(error);
     }
@@ -175,7 +180,7 @@ class OrganizerController {
         where: {
           EventId: id,
         },
-        include: [User],
+        include: [{ model: User }, { model: JobDesk }],
       });
       res.status(200).json(users);
     } catch (error) {
@@ -198,6 +203,20 @@ class OrganizerController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+
+  static async getUserDetail(req, res, next) {
+    try {
+      const { id } = req.params;
+      console.log(req.params);
+
+      const users = await UserEvent.findByPk(id, {
+        include: [User, JobDesk],
+      });
+      res.status(200).json(users);
+    } catch (error) {
+      console.log(error);
     }
   }
 }
