@@ -11,6 +11,7 @@ beforeAll(async () => {
     {
       username: "bejo",
       email: "bejo@gmail.com",
+      password: passowordHash,
       gender: "male",
       birthDate: "2023-07-03 06:37:01.733 +00:00",
       province: "riau",
@@ -18,7 +19,6 @@ beforeAll(async () => {
       phoneNumber: "0834523454",
       profilePicture:
         "https://media.sproutsocial.com/uploads/2022/06/profile-picture.jpeg",
-      password: passowordHash,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -40,7 +40,7 @@ afterAll(async () => {
   });
 });
 
-describe.skip("PUT for account user", () => {
+describe("PUT for account user", () => {
   test("PUT /api/profile return 200 update profile user", async () => {
     const dataBody = {
       gender: "female",

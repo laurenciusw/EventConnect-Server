@@ -71,11 +71,22 @@ beforeAll(async () => {
       updatedAt: new Date(),
     },
   ]);
-  await sequelize.queryInterface.bulkInsert("ToDoLists", [
+  await sequelize.queryInterface.bulkInsert("TodoLists", [
     {
+      EventId: 1,
       name: "mengatur panggung",
-      status: false,
       JobDeskId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+
+  await sequelize.queryInterface.bulkInsert("UserTodos", [
+    {
+      TodoListId: 1,
+      status: false,
+      UserId: 1,
+      EventId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -83,7 +94,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await sequelize.queryInterface.bulkDelete("ToDoLists", null, {
+  await sequelize.queryInterface.bulkDelete("UserTodos", null, {
+    restartIdentity: true,
+    cascade: true,
+    truncate: true,
+  });
+  await sequelize.queryInterface.bulkDelete("TodoLists", null, {
     restartIdentity: true,
     cascade: true,
     truncate: true,
@@ -110,7 +126,7 @@ afterAll(async () => {
   });
 });
 
-describe.skip("GET for event", () => {
+describe("GET for event", () => {
   test("GET /api/mytodo/:id", async () => {
     const response = await request(app)
       .get(`/api/mytodo/1`)
@@ -118,18 +134,18 @@ describe.skip("GET for event", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
-    expect(response.body).toHaveProperty("id", expect.any(Number));
-    expect(response.body).toHaveProperty("EventId", expect.any(Number));
-    expect(response.body).toHaveProperty("name", expect.any(String));
-    expect(response.body).toHaveProperty("ToDoLists", expect.any(Array));
+    expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
+    expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
+    expect(response.body[0]).toHaveProperty("status", expect.any(Boolean));
+    expect(response.body[0]).toHaveProperty("TodoList", expect.any(Object));
   });
 
-  test("GET /api/mytodo retrun wrong token 404 not found", async () => {
+  test("GET /api/mytodo return 404 not found", async () => {
     const response = await request(app)
-      .get(`/api/mytodo/1`)
-      .set("access_token", "token palsu");
+      .get(`/api/mytodo/100`)
+      .set("access_token", token);
 
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(404);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
     expect(response.body).toHaveProperty("name", expect.any(String));
@@ -137,10 +153,10 @@ describe.skip("GET for event", () => {
 
   test("GET /api/mytodo return wrong token 401 authorized", async () => {
     const response = await request(app)
-      .get(`/api/mytodo/100`)
-      .set("access_token", token);
+      .get(`/api/mytodo/1`)
+      .set("access_token", "token palsu");
 
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(401);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
     expect(response.body).toHaveProperty("name", expect.any(String));

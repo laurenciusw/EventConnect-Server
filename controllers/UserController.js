@@ -42,7 +42,6 @@ class UserController {
         message: `user with email ${email} succesfully created`,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -76,7 +75,7 @@ class UserController {
         email,
         id: user.id,
         name: user.username,
-        photoUrl: user.profilePicture
+        photoUrl: user.profilePicture,
       });
     } catch (error) {
       next(error);
@@ -91,7 +90,6 @@ class UserController {
       if (!event) throw { name: "NotFound" };
       const { status, JobDeskId, summary } = req.body;
 
-      console.log(event.id);
       let newRegis = await UserEvent.create({
         status: "Pending",
         JobDeskId,
@@ -101,7 +99,6 @@ class UserController {
       });
       res.status(201).json(newRegis);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -141,7 +138,7 @@ class UserController {
         include: [TodoList],
       });
 
-      if (!list) throw { name: "NotFound" };
+      if (list.length == 0) throw { name: "NotFound" };
 
       res.status(200).json(list);
     } catch (error) {
@@ -155,7 +152,7 @@ class UserController {
       const user = await User.findOne({ where: { id: req.user.id } });
       res.status(200).json(user);
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -172,7 +169,7 @@ class UserController {
       await User.update(newData, { where: { id } });
       res.status(200).json({ message: `succes updated` });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -192,7 +189,7 @@ class UserController {
       await User.update(newData, { where: { id } });
       res.status(200).json({ message: `succes updated` });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -206,7 +203,7 @@ class UserController {
       if (!isValidPassword) throw { name: "EmailPasswordInvalid" };
       res.status(200).json({ message: `OK` });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -230,7 +227,7 @@ class UserController {
 
       res.status(200).json(lists);
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 
@@ -250,7 +247,7 @@ class UserController {
         message: `Ok`,
       });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
   //update status claim
@@ -269,7 +266,7 @@ class UserController {
         message: `Ok`,
       });
     } catch (error) {
-      console.log(error);
+      next(error);
     }
   }
 }

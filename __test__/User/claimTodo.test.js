@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../../app");
-const { sequelize, User, UserEvent } = require("../../models");
+const { sequelize, User } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 const { signToken } = require("../../helpers/jwt");
 
@@ -38,14 +38,7 @@ beforeAll(async () => {
       updatedAt: new Date(),
     },
   ]);
-  await sequelize.queryInterface.bulkInsert("JobDesks", [
-    {
-      name: "ngepel",
-      EventId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
+
   let passowordHash = hashPassword("12345");
   await sequelize.queryInterface.bulkInsert("Users", [
     {
@@ -70,29 +63,34 @@ beforeAll(async () => {
   };
 
   token = signToken(payload);
-  await sequelize.queryInterface.bulkInsert("UserEvents", [
+
+  await sequelize.queryInterface.bulkInsert("JobDesks", [
     {
-      status: "Pending",
-      JobDeskId: 1,
-      summary: "menambah minat baca",
-      UserId: 1,
+      name: "ngepel",
       EventId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+
+  await sequelize.queryInterface.bulkInsert("TodoLists", [
+    {
+      EventId: 1,
+      name: "mengatur panggung",
+      JobDeskId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   ]);
 });
 
-beforeEach(() => {
-  jest.restoreAllMocks();
-});
-
 afterAll(async () => {
-  await sequelize.queryInterface.bulkDelete("UserEvents", null, {
+  await sequelize.queryInterface.bulkDelete("TodoLists", null, {
     restartIdentity: true,
     cascade: true,
     truncate: true,
   });
+
   await sequelize.queryInterface.bulkDelete("JobDesks", null, {
     restartIdentity: true,
     cascade: true,
@@ -115,43 +113,38 @@ afterAll(async () => {
   });
 });
 
-describe("GET for event", () => {
-  test("GET /api/mylist", async () => {
+describe("Post for claim todo", () => {
+  test("Post /api/todo return 200 claim todo", async () => {
+    const dataBody = {
+      JobDeskId: 1,
+      EventId: 1,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .post(`/api/todo`)
+      .send(dataBody)
       .set("access_token", token);
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body).toBeInstanceOf(Object);
     expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("status", expect.any(String));
-    expect(response.body[0]).toHaveProperty("JobDeskId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("summary", expect.any(String));
-    expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
     expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("User", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("Event", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("JobDesk", expect.any(Object));
+    expect(response.body[0]).toHaveProperty("name", expect.any(String));
+    expect(response.body[0]).toHaveProperty("JobDeskId", expect.any(Number));
   });
 
-  test("GET /api/mylist retrun wrong token 401", async () => {
+  test("PUT /api/todo return 401 authorized", async () => {
+    const dataBody = {
+      JobDeskId: 1,
+      EventId: 1,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .post(`/api/todo`)
+      .send(dataBody)
       .set("access_token", "token palsu");
 
     expect(response.status).toBe(401);
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
     expect(response.body).toHaveProperty("name", expect.any(String));
-  });
-
-  test("GET /api/mylist return internal server error 500", async () => {
-    jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
-    const response = await request(app)
-      .get(`/api/mylist`)
-      .set("access_token", token);
-
-    expect(response.status).toBe(500);
-    expect(response.body).toHaveProperty("message", expect.any(String));
   });
 });

@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../../app");
-const { sequelize, User, UserEvent } = require("../../models");
+const { sequelize, User } = require("../../models");
 const { hashPassword } = require("../../helpers/bcrypt");
 const { signToken } = require("../../helpers/jwt");
 
@@ -38,14 +38,7 @@ beforeAll(async () => {
       updatedAt: new Date(),
     },
   ]);
-  await sequelize.queryInterface.bulkInsert("JobDesks", [
-    {
-      name: "ngepel",
-      EventId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
+
   let passowordHash = hashPassword("12345");
   await sequelize.queryInterface.bulkInsert("Users", [
     {
@@ -70,21 +63,28 @@ beforeAll(async () => {
   };
 
   token = signToken(payload);
-  await sequelize.queryInterface.bulkInsert("UserEvents", [
+
+  await sequelize.queryInterface.bulkInsert("JobDesks", [
     {
-      status: "Pending",
-      JobDeskId: 1,
-      summary: "menambah minat baca",
-      UserId: 1,
+      name: "ngepel",
       EventId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   ]);
-});
 
-beforeEach(() => {
-  jest.restoreAllMocks();
+  await sequelize.queryInterface.bulkInsert("UserEvents", [
+    {
+      status: "on hold",
+      EventId: 1,
+      UserId: 1,
+      JobDeskId: 1,
+      summary: "event buat menanam pisang",
+      isClaim: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
 });
 
 afterAll(async () => {
@@ -115,28 +115,28 @@ afterAll(async () => {
   });
 });
 
-describe("GET for event", () => {
-  test("GET /api/mylist", async () => {
+describe("Patch for claim event user", () => {
+  test("Patch /api/users/:id return 200 claim event user", async () => {
+    const dataBody = {
+      isClaim: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/users/1`)
+      .send(dataBody)
       .set("access_token", token);
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body[0]).toHaveProperty("id", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("status", expect.any(String));
-    expect(response.body[0]).toHaveProperty("JobDeskId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("summary", expect.any(String));
-    expect(response.body[0]).toHaveProperty("UserId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("EventId", expect.any(Number));
-    expect(response.body[0]).toHaveProperty("User", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("Event", expect.any(Object));
-    expect(response.body[0]).toHaveProperty("JobDesk", expect.any(Object));
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", expect.any(String));
   });
 
-  test("GET /api/mylist retrun wrong token 401", async () => {
+  test("PATCH /api/todo return 401 authorized", async () => {
+    const dataBody = {
+      isClaim: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/users/1`)
+      .send(dataBody)
       .set("access_token", "token palsu");
 
     expect(response.status).toBe(401);
@@ -145,13 +145,18 @@ describe("GET for event", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test("GET /api/mylist return internal server error 500", async () => {
-    jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
+  test("PATCH /api/todo return 404 not found", async () => {
+    const dataBody = {
+      isClaim: true,
+    };
     const response = await request(app)
-      .get(`/api/mylist`)
+      .patch(`/api/users/100`)
+      .send(dataBody)
       .set("access_token", token);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(404);
+    expect(response.body).toBeInstanceOf(Object);
     expect(response.body).toHaveProperty("message", expect.any(String));
+    expect(response.body).toHaveProperty("name", expect.any(String));
   });
 });
