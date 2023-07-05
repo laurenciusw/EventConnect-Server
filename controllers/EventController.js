@@ -102,7 +102,6 @@ class EventController {
         throw { name: 'NotFound' }
       }
 
-      console.log(Benefits);
       // let arr = []
       // Benefits.forEach((e, i) => {
       //   let promise = Benefit.update({ name: Benefits[i].name }, { where: { id: e.id } })
@@ -115,14 +114,14 @@ class EventController {
       //   .catch(err => {
       //     throw err
       //   })
-      // const updatedEvent = await Event.update({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status }, {
-      //   where: {
-      //     id
-      //   }
-      // })
+      const updatedEvent = await Event.update({ name, location, startDate, imageUrl, description, endDate, registrationDate, category, status }, {
+        where: {
+          id
+        }
+      })
       // console.log(updatedEvent);
 
-      // res.status(200).json(updatedEvent)
+      res.status(200).json(updatedEvent)
 
     } catch (error) {
       console.log(error);
