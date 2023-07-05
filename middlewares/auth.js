@@ -9,6 +9,7 @@ async function authentiaction(req, res, next) {
     }
 
     let payload = verifyToken(access_token);
+    console.log(payload, "dari authenticat");
     let user = await User.findByPk(payload.id);
     if (!user) {
       throw { name: "invalidToken" };

@@ -38,7 +38,7 @@ beforeAll(async () => {
       updatedAt: new Date(),
     },
   ]);
-  let passowordHash = hashPassword("12345");
+  let passowordHash = hashPassword("123456");
   await sequelize.queryInterface.bulkInsert("Users", [
     {
       username: "bejo",
@@ -121,10 +121,10 @@ describe("GET for event", () => {
     expect(response.body).toHaveProperty("id", expect.any(Number));
     expect(response.body).toHaveProperty("EventId", expect.any(Number));
     expect(response.body).toHaveProperty("name", expect.any(String));
-    expect(response.body).toHaveProperty("ToDoLists", expect.any(Array));
+    expect(response.body).toHaveProperty("TodoLists", expect.any(Array));
   });
 
-  test("GET /api/mytodo retrun wrong token 404 not found", async () => {
+  test("GET /api/mytodo retrun wrong token 401 ", async () => {
     const response = await request(app)
       .get(`/api/mytodo/1`)
       .set("access_token", "token palsu");
@@ -135,7 +135,7 @@ describe("GET for event", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test("GET /api/mytodo return wrong token 401 authorized", async () => {
+  test("GET /api/mytodo return wrong token 404 not found", async () => {
     const response = await request(app)
       .get(`/api/mytodo/100`)
       .set("access_token", token);

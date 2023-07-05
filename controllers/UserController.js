@@ -1,5 +1,5 @@
 const { hashPassword, comparePassword } = require("../helpers/bcrypt");
-const { User, UserEvent, Event, JobDesk, ToDoList } = require("../models/");
+const { User, UserEvent, Event, JobDesk, TodoList } = require("../models/");
 const { signToken } = require("../helpers/jwt");
 const jobdesk = require("../models/jobdesk");
 const { where } = require("sequelize");
@@ -125,14 +125,17 @@ class UserController {
     try {
       const { id } = req.params;
       const list = await JobDesk.findByPk(id, {
-        include: {
-          model: ToDoList,
-        },
+        include: [
+          {
+            model: TodoList,
+          },
+        ],
       });
       if (!list) throw { name: "NotFound" };
 
       res.status(200).json(list);
     } catch (error) {
+      console.log(error, " ini dari todo controller");
       next(error);
     }
   }

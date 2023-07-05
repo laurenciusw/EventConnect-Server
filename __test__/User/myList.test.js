@@ -70,6 +70,7 @@ beforeAll(async () => {
   };
 
   token = signToken(payload);
+
   await sequelize.queryInterface.bulkInsert("UserEvents", [
     {
       status: "Pending",
@@ -115,8 +116,9 @@ afterAll(async () => {
   });
 });
 
-describe.skip("GET for event", () => {
+describe("GET for event", () => {
   test("GET /api/mylist", async () => {
+    console.log(token, "dari my list");
     const response = await request(app)
       .get(`/api/mylist`)
       .set("access_token", token);
@@ -145,7 +147,7 @@ describe.skip("GET for event", () => {
     expect(response.body).toHaveProperty("name", expect.any(String));
   });
 
-  test.only("GET /api/mylist return internal server error 500", async () => {
+  test("GET /api/mylist return internal server error 500", async () => {
     jest.spyOn(UserEvent, "findAll").mockRejectedValue("Error");
     const response = await request(app)
       .get(`/api/mylist`)
