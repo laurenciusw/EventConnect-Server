@@ -84,7 +84,7 @@ const custObj = {
   updatedAt: new Date(),
 };
 
-describe.skip("create event", () => {
+describe("create event", () => {
   it("should create event and return 201", async () => {
     const response = await request(app)
       .post("/events")
@@ -99,7 +99,7 @@ describe.skip("create event", () => {
   });
 });
 
-describe.skip("read event", () => {
+describe("read event", () => {
   it("should read all event and return 200", async () => {
     const response = await request(app)
       .get("/events")

@@ -190,7 +190,7 @@ describe('login organizer', () => {
 
 });
 
-describe.skip("login organizer", () => {
+describe("login organizer", () => {
   it("should login organizer and return 200", async () => {
     const response = await request(app)
       .post("/loginorganizer")
@@ -204,7 +204,7 @@ describe.skip("login organizer", () => {
   });
 });
 
-describe.skip("create organizer", () => {
+describe("create organizer", () => {
   it("should create organizer and return 201", async () => {
     const response = await request(app)
       .post("/organizers")
@@ -236,7 +236,7 @@ describe.skip("create organizer", () => {
 
 });
 
-describe.skip("create TodoList", () => {
+describe("create TodoList", () => {
   it("should create TodoList and return 201", async () => {
     const response = await request(app)
       .post("/todolists")
@@ -251,7 +251,7 @@ describe.skip("create TodoList", () => {
   });
 });
 
-describe.skip("read organizer", () => {
+describe("read organizer", () => {
   it("should read all organizer and return 200", async () => {
     const response = await request(app)
       .get("/organizers")
@@ -268,7 +268,7 @@ describe.skip("read organizer", () => {
   });
 });
 
-describe.skip("put organizer", () => {
+describe("put organizer", () => {
   it("should change organizer and return 200", async () => {
     const response = await request(app)
       .put("/organizers/1")
@@ -325,7 +325,7 @@ describe.skip("put organizer", () => {
 
 });
 
-describe.skip("delete organizer", () => {
+describe("delete organizer", () => {
   it("should delete organizer and return 200", async () => {
     const response = await request(app)
       .delete("/organizers/2")
